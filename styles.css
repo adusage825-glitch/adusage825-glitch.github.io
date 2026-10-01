@@ -1,0 +1,1384 @@
+/* =========================================================
+   GLOBAL DESIGN TOKENS
+   Change these to retheme the entire site quickly.
+========================================================= */
+:root {
+  --background: oklch(0.13 0.02 250);   /* page background */
+  --foreground: oklch(0.95 0.02 321.26);    /* primary text - purple   */
+  --muted:      oklch(0.55 0.02 250);   /* secondary text */
+  --gold:       oklch(0.62 0.23 299.47);    /* accent  - changed to Purple       */
+  --gold-glow:  oklch(0.61 0.26 295.26 / 0.6); /*changed to Purple*/
+  --border:     oklch(0.63 0.24 305.11 / 0.2); /*changed to Purple*/
+  --bottomborder: oklch(0.64 0.24 307.84 / 0.55);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; overflow-x: hidden; }
+
+body {
+  font-family: 'Cinzel', serif;
+  background: var(--background); 
+  color: var(--foreground);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: pointer; background: none; border: none; color: inherit; }
+input { font-family: inherit; color: inherit; }
+.hidden { display: none !important; }
+
+/* =========================================================
+   SCROLL REVEAL ANIMATION
+   Any element with class "reveal" starts invisible and
+   slides+fades in once it enters the viewport (handled by
+   IntersectionObserver in script.js -> "in-view" class).
+========================================================= */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 1s cubic-bezier(.2,.7,.2,1), transform 1s cubic-bezier(.2,.7,.2,1);
+  will-change: opacity, transform;
+}
+.reveal.in-view { opacity: 1; transform: translateY(0); }
+
+/* =========================================================
+   LOADING SCREEN
+========================================================= */
+.loading {
+ position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--background);
+  transition: opacity 0.7s ease;
+}
+.loading.fade-out { opacity: 0; pointer-events: none; }
+.loading-content { display: flex; flex-direction: column; align-items: center; gap: 2rem; }
+.dots { display: flex; gap: 0.75rem; }
+.dot {
+  height: 12px; width: 12px; border-radius: 50%;
+  border: 1px solid var(--gold);
+  background: transparent;
+  opacity: 0.25;
+  transition: all 0.3s ease;
+}
+.dot.filled {
+  background: var(--gold);
+  opacity: 1;
+  box-shadow: 0 0 12px var(--gold-glow);
+}
+.loading-text { font-size: 0.75rem; letter-spacing: 0.4em; color: var(--muted); }
+.loading-logo {
+  height: 14rem; width: 14rem;
+  animation: fade-in-up 0.6s ease-out, float-glow 3s ease-in-out infinite 0.6s;
+  transition: all 0.7s ease;
+}
+.loading-logo.zoom-out { opacity: 0; transform: scale(1.3); }
+
+/* =========================================================
+   LOGIN OVERLAY (post-loading)
+   Warframe-inspired: thin gold rules under each input, a
+   centered card with the logo above and gold LOGIN button.
+========================================================= */
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fade-in 0.6s ease both;
+}
+.login-overlay.fade-out { animation: fade-out 0.5s ease forwards; pointer-events: none; }
+.login-veil {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at center, oklch(0.13 0.02 250 / 0.55), oklch(0.05 0.02 250 / 0.92));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.login-card {
+  position: relative;
+  width: min(92vw, 22rem);
+  padding: 2.25rem 2rem 1.75rem;
+  border: 1px solid var(--border);
+  background: oklch(0.10 0.02 250 / 0.6);
+  box-shadow: 0 0 40px oklch(0.05 0.02 250 / 0.8), 0 0 80px var(--gold-glow);
+  text-align: center;
+  animation: fade-in-up 0.7s cubic-bezier(.2,.7,.2,1) both;
+}
+.login-logo { height: 4rem; width: 4rem; margin: 0 auto 0.5rem; filter: drop-shadow(0 0 12px var(--gold-glow)); }
+.login-title {font-size: 4.5rem;text-align: center;color: var(--gold);z-index: 1;}
+.login-sub   {font-size: 1.65rem;letter-spacing: 0.4em;color: var(--muted);margin-top: 0.25rem;}
+.login-form  { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
+.login-field { display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 0.25rem; }
+.login-field span { font-size: 0.65rem; letter-spacing: 0.3em; color: var(--muted); }
+.login-field input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  padding: 0.4rem 0.1rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  outline: none;
+  transition: border-color 0.3s;
+  padding-left: 1.1rem;
+}
+.login-field input:focus { border-bottom-color: var(--gold); }
+.login-btn {
+  position: relative;
+  overflow: hidden;
+  margin-top: 0.5rem;
+  padding: 0.7rem 1rem;
+  border-radius: 15px;
+  border: 1px solid var(--gold);
+  color: oklch(1 0 0);
+  letter-spacing: 0.2em;
+  font-size: 1.0rem;
+  font-weight: bold;
+  background: #e270ff;
+  background: linear-gradient(90deg, rgb(235 157 255) 0%, rgb(255 104 255) 34%, rgba(255, 148, 230, 1) 72%, rgba(255, 196, 234, 1) 100%);
+  transition: background 0.3s;
+}
+.login-btn:hover {background: #e270ff; background: linear-gradient(90deg, rgb(229 128 255) 0%, rgb(255 112 255) 34%, rgba(255, 148, 230, 1) 72%, rgba(255, 196, 234, 1) 100%);}
+.login-forgot {font-size: 0.7rem;letter-spacing: 0.1em;color: var(--muted);margin-top: 0.25rem;}
+.login-forgot:hover { color: var(--gold); }
+
+/* =========================================================
+   HEADER
+========================================================= */
+.header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  background: oklch(0.13 0.02 250 / 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.header-inner {
+  max-width: 80rem; margin: 0 auto;
+  height: 5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1.5rem;
+}
+.brand { display: flex; align-items: center; gap: 0.75rem; }
+.brand-logo { height: 2.5rem; width: 2.5rem; }
+.brand-name { font-size: 0.875rem; letter-spacing: 0.3em; color: var(--gold); }
+.nav { display: none; align-items: center; gap: 0.5rem; }
+@media (min-width: 768px) { .nav { display: flex; } }
+.nav-btn {
+  position: relative; padding: 0.5rem 1.25rem;
+  font-size: 0.875rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: oklch(0.96 0.01 90 / 0.8);
+  transition: color 0.2s;
+}
+.nav-btn:hover { color: var(--gold); }
+.nav-underline {
+  position: absolute; left: 50%; bottom: 0;
+  transform: translateX(-50%) translateY(8px);
+  opacity: 0;
+  transition: all 0.5s ease;
+}
+.nav-underline img { height: 1rem; width: 5rem; }
+.nav-btn.active .nav-underline { opacity: 1; transform: translateX(-50%) translateY(0); }
+.mute-btn {
+  height: 2.5rem; width: 2.5rem; border-radius: 50%;
+  border: 1px solid oklch(0.63 0.24 305.11 / 0.4);
+  color: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.mute-btn:hover { background: oklch(0.63 0.24 305.11 / 0.1); }
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+.container { max-width: 80rem; margin: 0 auto; padding: 0 1.5rem; }
+.container.narrow { max-width: 56rem; }
+.container.center { text-align: center; display: flex; flex-direction: column; align-items: center; }
+.eyebrow { font-size: 0.75rem; letter-spacing: 0.5em; color: var(--gold); margin-bottom: 0.75rem; }
+.eyebrow.small { font-size: 0.7rem; letter-spacing: 0.4em; }
+.section-header { text-align: center; margin-bottom: 4rem; display: flex; flex-direction: column; align-items: center; }
+.section-title { font-size: 3rem; font-weight: 400; }
+@media (min-width: 768px) { .section-title { font-size: 3.75rem; } }
+.underline { height: 1.5rem; width: 10rem; opacity: 0.8; margin-top: 1rem; }
+.underline-md { height: 2rem; width: 12rem; margin: 1rem 0; }
+.underline-lg { height: 2rem; width: 14rem; opacity: 0.8; margin: 1.5rem auto; }
+.underline.rotated { transform: rotate(180deg); }
+
+/* =========================================================
+   KEYFRAMES
+========================================================= */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes float-glow {
+  0%, 100% { filter: drop-shadow(0 0 20px var(--gold-glow)); transform: translateY(0); }
+  50%      { filter: drop-shadow(0 0 40px var(--gold-glow)); transform: translateY(-8px); }
+}
+@keyframes shimmer { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+/* =========================================================
+   HERO
+========================================================= */
+.hero { position: relative; height: 100vh; width: 100%; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.hero-bg {
+  position: absolute; inset: -3rem;
+  background-image: url('assets/hero-bg.png');
+  background-size: cover; background-position: center;
+  transition: transform 0.6s ease-out;
+  transform: scale(1.08);
+}
+.hero-veil {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom,
+    oklch(0.13 0.02 250 / 0.4) 0%,
+    oklch(0.13 0.02 250 / 0.2) 50%,
+    var(--background) 100%);
+}
+.hero-content { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 1.5rem; }
+.hero-title { font-size: 4.5rem; font-weight: 700; text-shadow: 0 4px 30px oklch(0.13 0.02 250); }
+@media (min-width: 768px) { .hero-title { font-size: 8rem; } }
+.hero-name  { font-size: 1.5rem; letter-spacing: 0.3em; color: var(--gold); text-shadow: 0 0 20px var(--gold-glow); }
+@media (min-width: 768px) { .hero-name  { font-size: 2.25rem; } }
+.btn-primary {
+  position: relative; overflow: hidden;
+  margin-top: 2.5rem;
+  padding: 1rem 3rem;
+  border: 1px solid var(--gold);
+  background: oklch(0.64 0.31 319.9 / 0.05);
+  transition: background 0.3s;
+}
+.btn-primary > span:first-child { font-size: 0.875rem; letter-spacing: 0.4em; color: var(--gold); text-transform: uppercase; }
+.btn-primary:hover { background: oklch(0.68 0.25 317.92 / 0.15); }
+.btn-shine {
+  position: absolute; inset: 0;
+  background: linear-gradient(to right, transparent, oklch(0.72 0.28 328.54 / 0.3), transparent);
+  transform: translateX(-100%);
+  transition: transform 1s ease;
+}
+.btn-primary:hover .btn-shine, .login-btn:hover .btn-shine { transform: translateX(100%); }
+.scroll-indicator { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); color: oklch(0.83 0.13 310.89 / 0.6); animation: shimmer 2s ease-in-out infinite; text-align: center; }
+.scroll-line { height: 3rem; width: 1px; background: oklch(0.83 0.13 310.89 / 0.6); margin: 0 auto; }
+.scroll-indicator p { font-size: 0.8rem; letter-spacing: 0.4em; margin-top: 0.5rem; }
+
+/* --- RESPONSIVE POLAROID GALLERY --- */
+
+.polaroid-gallery-wrapper {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px 15px;
+  box-sizing: border-box;
+}
+
+.polaroid-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px 20px;
+  list-style: none;
+  padding: 0;
+  margin: 40px auto 0;
+}
+
+.polaroid-item {
+  position: relative;
+  width: 100%;
+  -webkit-filter: sepia(0.65);
+  /* filter: sepia(0.65); */
+  filter: grayscale(0.65);
+  transition: filter 0.4s ease, z-index 0.2s ease;
+}
+
+.polaroid-item:hover {
+  -webkit-filter: sepia(0);
+  filter: sepia(0);
+  z-index: 20;
+}
+
+.polaroid-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 8px solid #e199ff;
+  border-bottom-width: 32px;
+  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.4);
+  box-sizing: border-box;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
+}
+
+/* Scattered Rotations & Offsets */
+.polaroid-item:nth-child(1) img {
+  transform: rotate(-7deg) translateY(10px);
+}
+
+.polaroid-item:nth-child(2) img {
+  transform: rotate(6deg) translateY(25px);
+}
+
+.polaroid-item:nth-child(3) img {
+  transform: rotate(-4deg) translateY(-5px);
+}
+
+.polaroid-item:nth-child(4) img {
+  transform: rotate(5deg) translateY(15px);
+}
+
+.polaroid-item:nth-child(5) img {
+  transform: rotate(-8deg) translateY(20px);
+}
+
+.polaroid-item:nth-child(6) img {
+  transform: rotate(4deg) translateY(5px);
+}
+
+.polaroid-item:nth-child(7) img {
+  transform: rotate(4deg) translateY(5px);
+}
+
+.polaroid-item:nth-child(8) img {
+  transform: rotate(-8deg) translateY(5px);
+}
+
+.polaroid-item:nth-child(9) img {
+  transform: rotate(5deg) translateY(5px);
+}
+
+/* Hover Zoom & Elevation */
+.polaroid-item:hover img {
+  transform: scale(1.25) rotate(0deg) translateY(0) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
+}
+
+/* --- RESPONSIVE BREAKPOINTS --- */
+/* Large Screens / Desktops */
+@media (min-width: 1024px) {
+  .polaroid-gallery-wrapper {
+    max-width: 1050px; /* Gives the grid more room to expand */
+  }
+
+  .polaroid-list {
+    gap: 60px 45px; /* Increase row gap (60px) and column gap (45px) */
+  }
+}
+
+/* Tablet (2 columns) */
+@media (max-width: 768px) {
+  .polaroid-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 35px 25px;
+  }
+
+  .polaroid-item:hover img {
+    transform: scale(1.18) rotate(0deg) translateY(0) !important;
+  }
+}
+
+/* Mobile (1 column centered) */
+@media (max-width: 480px) {
+  .polaroid-list {
+    grid-template-columns: 1fr;
+    max-width: 280px;
+    gap: 30px;
+  }
+
+  .polaroid-item:hover img {
+    transform: scale(1.1) rotate(0deg) translateY(0) !important;
+  }
+}
+
+/* --------------------------------------------------
+       1. ENTRANCE ANIMATIONS FROM SIDES
+    -------------------------------------------------- */
+/* Container for Letters */
+.letters-container {
+    display: flex;
+    gap: 3.5rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    /* max-width: 1200px; */
+    width: 100%;
+}
+
+.envelope-card {
+      position: relative;
+      width: 450px; /*280*/
+      height: 300px; /*190*/
+      cursor: pointer;
+      opacity: 0;
+      animation-duration: 1.2s;
+      animation-fill-mode: forwards;
+      animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    /* Letter 1: Comes from Left */
+    .envelope-card:nth-child(1) {
+      animation-name: slideFromLeft;
+      animation-delay: 0.2s;
+    }
+
+    /* Letter 2: Comes from Bottom */
+    .envelope-card:nth-child(2) {
+      animation-name: slideFromBottom;
+      animation-delay: 0.5s;
+    }
+
+    /* Letter 3: Comes from Right */
+    .envelope-card:nth-child(3) {
+      animation-name: slideFromRight;
+      animation-delay: 0.8s;
+    }
+
+    @keyframes slideFromLeft {
+      0% { opacity: 0; transform: translateX(-150px) rotate(-10deg); }
+      100% { opacity: 1; transform: translateX(0) rotate(0); }
+    }
+
+    @keyframes slideFromBottom {
+      0% { opacity: 0; transform: translateY(150px) scale(0.8); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes slideFromRight {
+      0% { opacity: 0; transform: translateX(150px) rotate(10deg); }
+      100% { opacity: 1; transform: translateX(0) rotate(0); }
+    }
+
+    /* --------------------------------------------------
+       2. ENVELOPE & BLANK PAGE STRUCTURE
+    -------------------------------------------------- */
+    .envelope {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #2a1b40;
+      border-radius: 8px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 15px rgba(186, 85, 211, 0.2);
+      perspective: 800px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .envelope-card:hover .envelope {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 25px rgba(255, 215, 0, 0.4);
+    }
+
+    /* Top Envelope Flap */
+    .flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 225px solid transparent; /*140*/
+      border-right: 225px solid transparent; /*140*/
+      border-top: 150px solid #3c275c; /*100*/
+      transform-origin: top center;
+      transition: transform 0.5s ease-in-out 0.2s, z-index 0s 0.2s; /* Waits for paper to slide down on close */
+      z-index: 4;
+    }
+
+    /* Front Pocket of Envelope */
+    .pocket {
+      position: absolute;
+      top: 0; /* Stretches to the very top */
+      left: 0;
+      width: 0;
+      height: 0;
+      /* Borders expand to exactly 280px x 190px to fully encapsulate the paper */
+      border-left: 225px solid #201433; /*140*/
+      border-right: 225px solid #201433; /*140*/
+      border-bottom: 150px solid #2d1d45; /*95*/
+      border-top: 150px solid transparent; /* 95 Creates the transparent V-notch */
+      border-radius: 0 0 8px 8px;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    /* Decorative Stamp */
+    .stamp {
+      position: absolute;
+      top: 20px; /*15*/
+      right: 20px; /*25*/
+      /* width: 38px; */
+      /* height: 42px; */
+      /* border: 2px dashed #ffd700; */
+      display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  font-size: 1.4rem; /*1.2*/
+	  z-index: 5;
+    }
+
+    /* Blank Page Inside Envelope */
+    .blank-paper {
+      position: absolute;
+      bottom: 15px; /* 10 */
+      left: 20px; /* 20 */
+      width: 410px; /* 410 */
+      height: 250px; /* 250 */
+      background: #fdfbf7;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 2; /* Sandwiched behind the front pocket (.pocket is z-index 3) */
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+      font-weight: 600;
+      font-size: 1.2rem; /* 1rem */
+      letter-spacing: 0.5px;
+    }
+
+    /* --------------------------------------------------
+       3. OPENING ANIMATION STATES
+    -------------------------------------------------- */
+    /* Open Top Flap */
+    .envelope-card.open .flap {
+      transform: rotateX(180deg);
+      z-index: 1; /* Flaps backward behind the paper */
+      transition: transform 0.5s ease-in-out 0s, z-index 0s 0.2s; /* Flips immediately on click */
+    }
+
+    /* Blank Page Slides Up and Out */
+    .envelope-card.open .blank-paper {
+      transform: translateY(-165px); /* 110 Slides up through the transparent V-notch */
+      /* No z-index change here! It stays tucked inside the front pocket beautifully */
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.3s; /* Waits 0.3s for the flap to get out of the way */
+    }
+
+    /* --------------------------------------------------
+       4. YOUTUBE VIDEO MODAL
+    -------------------------------------------------- */
+    .video-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+      z-index: 1000;
+    }
+
+    .video-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .video-content {
+      position: relative;
+      width: 90%;
+      max-width: 800px;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 35px rgba(255, 215, 0, 0.3);
+      transform: scale(0.85);
+      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .video-modal.active .video-content {
+      transform: scale(1);
+    }
+
+    .video-content iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: -45px;
+      right: 0;
+      background: transparent;
+      border: 2px solid #ffd700;
+      color: #ffd700;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 1.4rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .close-btn:hover {
+      background: #ffd700;
+      color: #000;
+    }
+
+
+/* =========================================================
+   CHAPTER II — BANNERS -OLD
+   Logo sits BEHIND the text, big and at ~25% opacity (like
+   the Mondstadt reference). The character is cropped close
+   so the face is visible right next to the text.
+========================================================= */
+.banners { padding: 6rem 0 8rem; }
+.banner-list { display: flex; flex-direction: column; gap: 0.6rem; width: 100%; }
+.banner {
+  position: relative; width: 100%;
+  height: 11rem;
+  overflow: hidden;
+  border-top: 1px solid oklch(0.82 0.15 75 / 0.15);
+  border-bottom: 1px solid oklch(0.82 0.15 75 / 0.15);
+  background: oklch(0.16 0.02 250);
+  cursor: pointer;
+  transition: box-shadow 0.5s ease, border-color 0.5s ease;
+}
+@media (min-width: 768px) { .banner { height: 14rem; } }
+.banner:hover {
+  border-color: var(--gold);
+  box-shadow: 0 0 60px oklch(0.82 0.15 75 / 0.25) inset, 0 0 40px var(--gold-glow);
+}
+.banner-bg {
+  position: absolute; inset: 0;
+  background-image: url('assets/hero-bg.jpg');
+  background-size: cover; background-position: center;
+  transform: scale(1.05);
+  transition: transform 1.4s cubic-bezier(0.2,0.7,0.2,1), filter 0.8s ease;
+  filter: brightness(0.55) saturate(0.8);
+}
+.banner:hover .banner-bg { transform: scale(1.25); filter: brightness(0.85) saturate(1.1); }
+.banner-vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 30%, oklch(0.10 0.02 250 / 0.75) 100%),
+    linear-gradient(to bottom, oklch(0.13 0.02 250 / 0.4), transparent 35%, oklch(0.13 0.02 250 / 0.5));
+}
+/* Character cropped close so the face is near the centered text */
+.banner-char {
+  position: absolute; right: 4%; top: 0; bottom: 0;
+  width: 38%; max-width: 28rem;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+.banner:hover .banner-char { opacity: 1; }
+.banner-char img {
+  position: absolute; right: 0; top: 50%;
+  /* 260% + negative offset crops down to a tight face/upper-body shot */
+  height: 260%;
+  width: auto;
+  transform: translateY(-58%);
+  object-fit: cover;
+  object-position: center top;
+}
+.banner-char::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to right, oklch(0.10 0.02 250 / 0.5), transparent 35%, transparent 70%, oklch(0.10 0.02 250 / 0.3));
+}
+/* Center stack: logo is its own absolute layer BEHIND text */
+.banner-center {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 1rem;
+}
+.banner-logo {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  height: 11rem; width: 11rem;
+  opacity: 0.22;                       /* ~22% transparent */
+  filter: drop-shadow(0 0 12px oklch(0.05 0.02 250 / 0.6));
+  transition: opacity 0.5s ease, transform 0.6s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+@media (min-width: 768px) { .banner-logo { height: 13rem; width: 13rem; } }
+.banner:hover .banner-logo { opacity: 0.30; transform: translate(-50%, -50%) scale(1.06); }
+.banner-name {
+  position: relative; z-index: 2;
+  font-size: 2.25rem; letter-spacing: 0.12em;
+  color: var(--foreground);
+  text-shadow: 0 2px 20px oklch(0.05 0.02 250 / 0.9);
+  transition: letter-spacing 0.5s ease;
+}
+@media (min-width: 768px) { .banner-name { font-size: 2.75rem; } }
+.banner:hover .banner-name { letter-spacing: 0.18em; }
+.banner-underline {
+  position: relative; z-index: 2;
+  height: 1rem; width: 0; opacity: 0;
+  margin-top: 0.4rem;
+  transition: width 0.5s ease, opacity 0.4s ease;
+  object-fit: contain;
+}
+.banner:hover .banner-underline { width: 10rem; opacity: 0.9; }
+.banner-detail {
+  position: relative; z-index: 2;
+  font-size: 0.75rem; letter-spacing: 0.4em;
+  color: var(--gold);
+  margin-top: 0.4rem;
+  opacity: 0; transform: translateY(6px);
+  transition: opacity 0.5s ease 0.05s, transform 0.5s ease 0.05s;
+}
+.banner:hover .banner-detail { opacity: 1; transform: translateY(0); }
+
+/* =========================================================
+   VIDEO
+========================================================= */
+.video-section { padding: 6rem 1.5rem; }
+.video-frame {
+  position: relative; width: 100%; max-width: 48rem;
+  aspect-ratio: 16/9;
+  border: 1px solid oklch(0.82 0.15 75 / 0.3);
+  overflow: hidden;
+  box-shadow: 0 0 60px oklch(0.82 0.15 75 / 0.15);
+  margin-top: 1rem;
+}
+.video-frame iframe { width: 100%; height: 100%; border: 0; }
+.video-caption { font-size: 0.875rem; letter-spacing: 0.3em; color: var(--muted); margin-top: 2rem; max-width: 32rem; }
+
+/* =========================================================
+   CHAPTER III — ICONS + CAROUSEL
+   icons-wrap spans the full width (no max-width) so the
+   icon-btns column can sit against the left edge while the
+   carousel sits near the right edge — matching the
+   Wuthering Waves Resonators page.
+========================================================= */
+/* --- Faded Background Image & Showcase Layout --- */
+.showcase-bg-wrapper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.showcase-bg-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.25;
+  /* Fades the image smoothly on all edges via CSS mask */
+  mask-image: radial-gradient(ellipse at 60% center, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at 60% center, black 30%, transparent 75%);
+}
+
+.icon-showcase {
+  position: relative;
+  overflow: hidden;
+}
+
+.icon-showcase-body {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- Showcase Character Cutout & Layout --- */
+.showcase-character-cutout {
+  position: absolute;
+  right: 0;
+  /* bottom: 0; */
+  height: 92%;
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+}
+
+.showcase-character-cutout img {
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(-10px 0px 30px rgba(0, 0, 0, 0.6));
+  mask-image: linear-gradient(to top, transparent 0%, black 15%);
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, black 15%);
+}
+
+.icon-showcase {
+  position: relative;
+  overflow: hidden;
+}
+
+.icon-showcase-body {
+  position: relative;
+  z-index: 2;
+  max-width: 480px;
+}
+
+/* --- Chapter III Detail Transitions --- */
+@keyframes slideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(-35px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(35px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.anim-slide-forward {
+  animation: slideInRight 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.anim-slide-backward {
+  animation: slideInLeft 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.icons-section { padding: 5rem 0; } /*8*/
+@media (min-width: 1024px) {
+  .icons-section { padding: 8rem 0; }
+}
+
+.icons-wrap {
+  width: 100%;
+  padding: 0 1rem; /* 0 2rem 0 2rem icons hug left edge */
+}
+
+@media (min-width: 1024px) {
+  .icons-wrap { padding: 0 2rem; }
+}
+
+.icons-grid {
+  display: grid; 
+  grid-template-columns: 1fr; 
+  gap: 3rem; 
+  align-items: stretch;
+}
+
+@media (min-width: 1024px) {
+  /* | big icon column | center showcase | carousel | */
+  .icons-grid { grid-template-columns: auto 1fr auto; gap: 4rem; padding-right: 3rem; }
+}
+/* Larger, bolder icon column on the left edge */
+.icon-btns { 
+display: flex; 
+gap: 1.25rem; 
+justify-content: center; 
+align-items: center; 
+}
+@media (min-width: 1024px) {
+  .icon-btns {
+    flex-direction: column;
+    justify-content: flex-start;
+	flex-wrap: nowrap;
+    padding-top: 2rem;
+  }
+}
+
+.icon-btn {
+  height: 4.5rem; width: 4.5rem;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  border: 1px solid oklch(0.82 0.15 75 / 0.2);
+  color: oklch(0.96 0.01 90 / 0.55);
+  transition: all 0.3s;
+}
+@media (min-width: 768px) {
+  .icon-btn { height: 5.5rem; width: 5.5rem; }
+}
+
+.icon-btn svg { width: 28px; height: 28px; }
+.icon-btn:hover { border-color: oklch(0.82 0.15 75 / 0.5); color: var(--foreground); }
+.icon-btn.active {
+  border-color: var(--gold);
+  background: oklch(0.82 0.15 75 / 0.1);
+  color: var(--gold);
+  box-shadow: 0 0 24px var(--gold-glow);
+}
+
+/* Center showcase — bigger background icon and bigger heading */
+.icon-showcase { 
+position: relative; 
+min-height: auto; /*520px*/ 
+animation: fade-in-up 0.5s ease-out; 
+}
+@media (min-width: 1024px) {
+  .icon-showcase { min-height: 520px; }
+}
+
+.icon-bg-large {
+  position: absolute; 
+  top: -1rem; 
+  left: -1rem;
+  height: 16rem; 
+  width: 16rem; 
+  color: var(--gold);
+  opacity: 0.12; 
+  pointer-events: none;
+}
+@media (min-width: 768px) {
+  .icon-bg-large { top: -2rem; left: -2rem; height: 26rem; width: 26rem; }
+}
+
+.icon-showcase-body { position: relative; padding-top: 3rem; }
+@media (min-width: 1024px) {
+  .icon-showcase-body { padding-top: 9rem; }
+}
+
+.icon-divider { height: 1px; width: 8rem; background: var(--gold); margin-bottom: 1.5rem; }
+.icon-name { font-size: 2.5rem; margin-bottom: 1rem; }
+@media (min-width: 768px) { .icon-name { font-size: 3.5rem; margin-bottom: 1.5rem;} }
+
+.icon-desc {
+  font-size: 1.1rem; 
+  line-height: 1.6; 
+  max-width: 32rem;
+  background: linear-gradient(to bottom, oklch(0.96 0.01 90 / 0.2) 0%, oklch(0.96 0.01 90) 100%);
+  -webkit-background-clip: text; 
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+@media (min-width: 768px) { .icon-desc { font-size: 1.25rem; line-height: 1.7; } }
+
+/* Banner carousel — much larger, ~half segment height */
+.carousel { 
+display: flex; 
+flex-direction: column;
+align-items: center;
+width: 100%; /**/
+gap: 1rem;
+/*gap: 0.75rem; 
+align-items: stretch;  
+justify-content: space-between;
+overflow-x: auto;
+padding-bottom: 0.5rem;
+scrollbar-width: none;*/ /* Hide scrollbar for clean look */
+
+/* flex-direction: column;  */
+/* align-items: center;  */
+/* position: relative;  */
+/* width: 44rem; */
+} /*position is new, width is new*/
+
+.carousel-track::-webkit-scrollbar { display: none; }
+@media (min-width: 768px) { .carousel-track { /*gap: 1rem; overflow-x: visible;*/overflow-x: visible; } }
+
+
+.carousel-track {
+  display: flex; 
+  gap: 1rem; 
+  align-items: stretch;
+  /* overflow: hidden; */
+  overflow-x: auto;
+  scrollbar-width: none;
+  width: 100%;
+  justify-content: space-between; /*center*/
+}
+/* Item heights: minHeight 50vh-ish for "half the segment". */
+.carousel-item {
+  position: relative;
+  height: 45vh; /*52vh*/
+  min-height: 22rem;  /*26rem*/
+  max-height: 32rem; /*34rem*/
+  width: 7.5rem; /*5.5rem*/
+  overflow: hidden;
+  border: 1px solid oklch(0.82 0.15 75 / 0.3);
+  cursor: pointer;
+  transition: width 0.55s cubic-bezier(.2,.7,.2,1);
+  flex: 0 0 auto;
+}
+
+@media (min-width: 768px) {
+  .carousel-item {
+    height: 60vh;
+    min-height: 32rem;
+    max-height: 42rem;
+    width: 9.5rem;
+  }
+}
+
+/* Only items inside the first 3 visible slots (.expandable) may grow.
+   The 4th slot (.fade) is a teaser and stays narrow + faded. */
+.carousel-item.expandable:hover { width: 11rem; /*12*/ }
+@media (min-width: 768px) {
+  .carousel-item.expandable:hover { width: 14rem; }
+}
+
+.carousel-item.fade {
+  -webkit-mask-image: linear-gradient(to right, black 0%, transparent 100%);
+  mask-image: linear-gradient(to right, black 0%, transparent 100%);
+  cursor: default;
+}
+.carousel-item img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+.carousel-item::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, oklch(0.13 0.02 250 / 0.9), oklch(0.13 0.02 250 / 0.3), transparent);
+  pointer-events: none;
+}
+.carousel-label {
+  position: absolute; 
+  bottom: 0.75rem; 
+  left: 0; 
+  right: 0;
+  text-align: center; 
+  font-size: 0.95rem; 
+  color: var(--foreground);
+  opacity: 0; 
+  transition: opacity 0.3s;
+  z-index: 2;
+}
+@media (min-width: 768px) {
+  .carousel-label { bottom: 1rem; font-size: 1.125rem; }
+}
+
+.carousel-item.expandable:hover .carousel-label { opacity: 1; }
+
+/* .carousel-controls { display: flex; gap: 1rem; margin-top: 1.5rem; } */
+.carousel-controls {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 100%; /*38rem*/
+  margin-top: 0.75rem; /*1.25rem*/
+  padding: 0 0.5rem; 
+}
+
+.ctrl-btn {
+  height: 2.75rem; 
+  width: 2.75rem;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid oklch(0.82 0.15 75 / 0.4);
+  color: var(--gold);
+  font-size: 1.25rem;
+  transition: background 0.2s;
+}
+.ctrl-btn:hover { background: oklch(0.82 0.15 75 / 0.1); }
+
+/*NEW ADDITION 2026*/
+/* =========================================================
+   DETAIL VIEW ENHANCEMENTS (Wuthering Waves Style)
+========================================================= */
+.back-btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: none; border: none; color: var(--gold);
+  font-size: 0.9rem; letter-spacing: 2px; cursor: pointer;
+  margin-bottom: 2rem; transition: opacity 0.2s;
+}
+.back-btn:hover { opacity: 0.7; }
+
+/* Single expanded card view on the right when clicked */
+.single-card-view {
+  height: 60vh; /*52vh*/
+  min-height: 32rem; /*26rem*/ 
+  max-height: 42rem; /*34rem*/
+  width: 14rem; /*14rem*/
+  position: relative;
+  border: 1px solid var(--gold);
+  overflow: hidden;
+  box-shadow: 0 0 30px var(--gold-glow);
+  background: #13111c;
+}
+.single-card-view img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+.single-card-view::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, oklch(0.13 0.02 250 / 0.9), oklch(0.13 0.02 250 / 0.3), transparent);
+  pointer-events: none;
+}
+.single-card-view .carousel-label {
+  position: absolute; bottom: 1rem; left: 0; right: 0;
+  text-align: center; font-size: 1.125rem; color: var(--foreground);
+  z-index: 2; opacity: 1;
+}
+
+/* =========================================================
+   FINALE
+========================================================= */
+.finale { position: relative; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 6rem 1.5rem; overflow: hidden; }
+.finale-glow { position: absolute; inset: 0; background: radial-gradient(circle at center, oklch(0.82 0.15 75 / 0.1), var(--background) 60%); }
+.finale-content { position: relative; z-index: 10; text-align: center; }
+.finale-title {
+  font-size: 4.5rem; font-weight: 700; line-height: 1;
+  background: linear-gradient(180deg, var(--gold-glow), var(--gold));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+@media (min-width: 768px) { .finale-title { font-size: 10rem; } }
+.finale-caption { margin-top: 2.5rem; font-size: 1.875rem;; letter-spacing: 0.5em; color: var(--muted); }
+
+/* =========================================================
+   LOGIN OVERLAY — FULLSCREEN VERSION
+   Overrides the earlier login styles to make the screen fill
+   the viewport with a central character figure (Warframe-style).
+   - Swap assets/login-figure.jpg to change the character.
+   - Tune .login-figure max-height to crop the figure differently.
+========================================================= */
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* background: oklch(0.04 0.02 250); */
+  overflow: hidden;
+}
+.login-bg {
+  position: absolute;
+  /* inset: 0; */
+  /* Subtle starfield + radial vignette */
+  /* background:
+    radial-gradient(ellipse at center, oklch(0.18 0.04 250 / 0.9) 0%, oklch(0.04 0.02 250) 70%),
+    radial-gradient(1px 1px at 20% 30%, oklch(0.96 0.01 90 / 0.6), transparent 40%),
+    radial-gradient(1px 1px at 80% 60%, oklch(0.96 0.01 90 / 0.5), transparent 40%),
+    radial-gradient(1px 1px at 50% 80%, oklch(0.96 0.01 90 / 0.4), transparent 40%),
+    radial-gradient(1px 1px at 70% 20%, oklch(0.96 0.01 90 / 0.5), transparent 40%); */
+}
+.login-figure {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  /* Controls how big the character appears; lower = smaller */
+  /* max-height: 100vh; */
+  width: auto;
+  object-fit: contain;
+  pointer-events: none;
+  /* opacity: 0; */
+  animation: figure-in 1.4s cubic-bezier(.2,.7,.2,1) 0.2s forwards;
+  /* filter: drop-shadow(0 0 60px oklch(0.05 0.02 250)) brightness(2); */
+}
+@keyframes figure-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(40px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.login-vignette {
+  position: absolute;
+  inset: 0;
+  /* background:
+    radial-gradient(ellipse at center, transparent 30%, oklch(0.04 0.02 250 / 0.85) 80%),
+    linear-gradient(to bottom, oklch(0.04 0.02 250 / 0.4), transparent 30%, transparent 70%, oklch(0.04 0.02 250) 100%); */
+  pointer-events: none;
+}
+
+/* Centered card now sits ON TOP of the character */
+.login-card {
+  position: relative;
+  z-index: 2;
+  width: min(92vw, 28rem);
+  padding: 2rem 1.75rem 1.5rem;
+  border: 0;
+  background: #f8efff;
+  border-radius: 25px;
+  box-shadow: none;
+  text-align: center;
+  box-shadow: 0px 0px 9px #00000080;
+}
+.login-error {
+  color: oklch(0.72 0.18 25);
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-top: -0.25rem;
+}
+.login-overlay.fade-out { animation: fade-out 0.7s ease forwards; pointer-events: none; }
+
+/* =========================================================
+   FORGOT-PASSWORD MODAL
+   - Edit the hint text in index.html under #forgotModal
+   - Clicking the backdrop or CLOSE dismisses it
+========================================================= */
+.modal {
+  position: fixed; inset: 0; z-index: 120;
+  display: flex; align-items: center; justify-content: center;
+  animation: fade-in 0.3s ease both;
+}
+.modal-backdrop {
+  position: absolute; inset: 0;
+  background: oklch(0.04 0.02 250 / 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.modal-card {
+  position: relative;
+  width: min(90vw, 24rem);
+  padding: 2rem 1.75rem 1.5rem;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: #f8efff;
+  box-shadow: 0 0 50px oklch(0.05 0.02 250), 0 0 80px var(--gold-glow);
+  animation: fade-in-up 0.4s cubic-bezier(.2,.7,.2,1) both;
+}
+.modal-logo { height: 3rem; width: 3rem; margin: 0 auto 0.75rem; filter: drop-shadow(0 0 10px var(--gold-glow)); }
+.modal-eyebrow { font-size: 0.85rem; font-weight:bold; letter-spacing: 0.4em; color: var(--gold); margin-bottom: 0.75rem; }
+.modal-text { font-size: 1.5rem; color: var(--gold); font-weight:bold; letter-spacing: 0.05em; margin-bottom: 1.25rem; }
+.modal-strong { color: var(--gold); font-weight: 700; letter-spacing: 0.15em; }
+.modal-btn {
+  position: relative; overflow: hidden;
+  padding: 0.65rem 1.5rem;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  letter-spacing: 0.4em; font-size: 0.75rem;
+  background: oklch(0.67 0.22 319.13 / 0.09);
+  transition: background 0.3s;
+}
+.modal-btn:hover { background: oklch(0.66 0.25 315.92 / 0.18); }
+
+/* =========================================================
+   LOGIN OVERRIDES — readability pass
+   - Brighter labels, placeholders, and eyebrow text
+   - Forgot-password button now has a visible gold border
+========================================================= */
+
+/* "— ENTER THE REALM —" eyebrow: use gold + glow instead of muted */
+.login-sub {
+  color: var(--gold);
+  text-shadow: 0 0 12px var(--gold-glow);
+  opacity: 0.95;
+}
+
+/* "Your Name" / "Password" labels: gold, bolder, slightly larger */
+.login-field span {
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-shadow: 0 0 8px oklch(0.66 0.25 313.05 / 0.35);
+}
+
+/* Input text + placeholder ("Birthday Girl", "••••••••") more visible */
+.login-field input {
+  color: #666666;
+  font-weight: 600;
+  border: 1px solid var(--bottomborder);/*oklch(0.82 0.15 75 / 0.55);*/
+  border-radius: 10px;
+  box-shadow: 0px 0px 3px 0px #0000009e;
+} 
+.login-field input::placeholder {
+  color: #666666;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+
+/* Forgot Password: give it the same boxed look as the LOGIN button */
+.login-forgot {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.55rem 1rem;
+  border-radius: 15px;
+  color: var(--gold);
+  font-size: 1.0rem;
+  text-transform: uppercase;
+  transition: background 0.3s, color 0.3s;
+}
+.login-forgot:hover {
+  /* background: oklch(0.82 0.15 75 / 0.18); */
+  color: oklch(0.61 0.26 295.44);
+  font-weight: bold;
+}
+
+/* =========================================================
+   FORGOT-PASSWORD MODAL — extras
+   - Side-by-side COPY + CLOSE buttons
+   - Dyslexic-friendly password display:
+       Uppercase letters glow gold and carry a small "UP" tag.
+       Lowercase letters are dimmer/grey.
+       Letters are spaced out generously so each glyph reads
+       individually (helps dyslexic readers).
+   Edit colors/sizes here to taste.
+========================================================= */
+.modal-actions {
+  display: flex; gap: 0.75rem; justify-content: center; margin-top: 0.5rem;
+}
+/* Secondary "COPY" variant — slightly dimmer until clicked */
+.modal-btn-ghost {
+  background: transparent;
+}
+.modal-btn-ghost.copied {
+  background: oklch(0.64 0.24 306.18 / 0.35);
+  color: var(--background);
+}
+
+/* Dyslexic-friendly password display */
+.pw-display {
+  display: inline-flex; gap: 0.55rem;
+  justify-content: center; align-items: baseline;
+  margin: 0.25rem auto 0.5rem;
+  /* Verdana = wide, low-confusion letterforms commonly recommended
+     for dyslexic readers. Falls back to system sans. */
+  font-family: 'Verdana', 'Trebuchet MS', system-ui, sans-serif;
+  letter-spacing: 0.05em;
+}
+.pw-display .pw-up,
+.pw-display .pw-lo { display: inline-block; line-height: 1; }
+/* Uppercase = bigger, gold, glowing, with a tiny "UP" badge above */
+.pw-display .pw-up {
+  position: relative;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-shadow: 0 0 14px var(--gold-glow);
+  padding-top: 0.9rem; /* room for the UP tag */
+}
+.pw-display .pw-up::before {
+  content: 'UP';
+  position: absolute; top: 0; left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.55rem; letter-spacing: 0.2em;
+  color: var(--gold);
+  background: oklch(0.82 0.15 75 / 0.15);
+  border: 1px solid var(--gold);
+  padding: 1px 4px; border-radius: 2px;
+  font-family: 'Cinzel', serif;
+}
+/* Lowercase = smaller, dim grey */
+.pw-display .pw-lo {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--gold);
+  padding-top: 0.9rem; /* baseline-align with the UP padding */
+}
+.pw-hint {
+  font-size: 0.7rem; 
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  margin-bottom: 1.1rem;
+}
+.pw-hint strong { color: var(--gold); font-weight: 700; }
+/*NEW BELOW*/
+
+.test {
+    position: relative;
+    z-index: 2;
+    padding: 2rem 1.75rem 1.5rem;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    text-align: center;
+    flex-direction: column;
+}
+
+.test1 {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    height: 80%;
+    align-content: center;
+    align-items: center;
+}
+
+p.test3 {
+    z-index: 99;
+    margin-top: 1rem;
+    color: #8800ff;
+    text-transform: none;
+    font-family: cursive;
+}

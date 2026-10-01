@@ -1,0 +1,319 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday — Aetheria</title>
+<meta name="description" content="An immersive birthday tribute inspired by fantasy realms.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body style="overflow: hidden;">
+
+<!-- =========================================================
+     LOADING SCREEN
+     Dots fill left-to-right while a fake progress counter runs.
+     When 100% is reached we hide the dots and reveal the logo,
+     which then zooms+fades out to expose the login screen.
+========================================================== -->
+
+<div id="loading" class="loading">
+  <div id="loadingDots" class="loading-content">
+    <div class="dots" id="dots"></div>
+    <p class="loading-text">LOADING <span id="loadingPct">0</span>%</p>
+  </div>
+  <img id="loadingLogo" class="loading-logo hidden" src="assets/Logo.svg" alt="Logo">
+</div>
+
+<!-- =========================================================
+     LOGIN OVERLAY (FULLSCREEN, Warframe-inspired)
+     - The character image (assets/login-figure.jpg) is the focal
+       art. Replace that JPG with any image you like — the
+       framing and aspect ratio will adjust automatically.
+     - The form sits centered on top of the figure with a
+       celestial circle behind it.
+     - Real validation lives in script.js:
+         * Password must be exactly "SinBday" (case-sensitive)
+         * Username gates the displayed name on the homepage
+========================================================== -->
+<div id="loginOverlay" class="login-overlay">
+  <!-- Background layers: deep cosmic veil + the central character figure -->
+  <div class="login-bg"></div>
+  <img class="login-figure" src="assets/login-figure1.png" alt="">
+  
+
+  <!-- Centered login card -->
+  <div class="test1">
+  <div class="test"><h2 class="login-sub">Welcome Back</h2>
+  <p class="login-title">Happy Birthday</p>
+  </div>
+  
+  <div class="login-card">
+    <form id="loginForm" class="login-form" autocomplete="off">
+      <label class="login-field">
+        <!-- Label text (change "Your Name" here if you want a different label) -->
+        <span>Your Name</span>
+        <!-- Placeholder text shown when the input is empty -->
+        <input id="loginUser" type="text" placeholder="Birthday Girl" required="">
+      </label>
+      <label class="login-field">
+        <span>Password</span>
+        <input id="loginPass" type="password" placeholder="••••••••" required="">
+      </label>
+      <!-- Inline error message; toggled via JS when password is wrong -->
+      <p id="loginError" class="login-error hidden">The stars do not recognize this passphrase.</p>
+      <button class="login-btn" type="submit">
+        <span>LOGIN</span>
+        <span class="btn-shine"></span>
+      </button>
+      <button type="button" id="forgotBtn" class="login-forgot">Forgot Password</button>
+    </form>
+</div>
+  <p class="test3">I hope this makes your day a little better.</p></div>
+</div>
+
+<!-- =========================================================
+     FORGOT PASSWORD MODAL
+     Opens when the user clicks "Forgot Password".
+     The hint text is plain HTML below — edit it directly.
+========================================================== -->
+<div id="forgotModal" class="modal hidden">
+  <div class="modal-backdrop" data-close-modal=""></div>
+  <div class="modal-card">
+    <p class="modal-eyebrow">— Unlock Access —</p>
+    <p class="modal-text">The password is:</p>
+    <!--
+      Dyslexic-friendly password display.
+      Uppercase letters use the .pw-up class (gold + larger + UP arrow tag),
+      lowercase letters use .pw-lo. Letters are spaced out so each glyph
+      reads individually. To change the password text, also update
+      PASSWORD inside script.js so login validation matches.
+    -->
+    <p class="pw-display" id="pwDisplay" aria-label="Password: capital S, i, n, capital B, d, a, y">
+      <span class="pw-up">S</span><span class="pw-lo">i</span><span class="pw-lo">n</span><span class="pw-up">B</span><span class="pw-lo">d</span><span class="pw-lo">a</span><span class="pw-lo">y</span>
+    </p>
+    <p class="pw-hint">Gold letters are <strong>UPPERCASE</strong> · grey letters are lowercase</p>
+    <!-- Action row: Copy + Close, side by side -->
+    <div class="modal-actions">
+      <button type="button" id="copyPassBtn" class="modal-btn modal-btn-ghost">
+        <span id="copyPassLabel">COPY</span>
+        <span class="btn-shine"></span>
+      </button>
+      <button type="button" class="modal-btn" data-close-modal="">
+        <span>CLOSE</span>
+        <span class="btn-shine"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+     HEADER — sticky top bar with brand, nav anchors and mute toggle.
+========================================================== -->
+<header class="header">
+  <div class="header-inner">
+    <button class="brand" data-scroll="home">
+      <img src="assets/Logo.svg" alt="" class="brand-logo">
+      <span class="brand-name">BirthdaySite</span>
+    </button>
+    <nav class="nav">
+      <button class="nav-btn active" data-scroll="home">Home</button>
+      <button class="nav-btn" data-scroll="memories">Memories</button>
+      <button class="nav-btn" data-scroll="letters">Letters</button>
+      <button class="nav-btn" data-scroll="wishes">Wishes</button>
+      <button class="nav-btn" data-scroll="finale">Finale</button>
+    </nav>
+    <button id="muteBtn" class="mute-btn" aria-label="Toggle music">
+      <svg id="iconMuted" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="22" y1="9" x2="16" y2="15"></line><line x1="16" y1="9" x2="22" y2="15"></line></svg>
+      <svg id="iconUnmuted" class="hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section id="home" class="hero">
+    <div id="heroBg" class="hero-bg" style="transform: translate(19.25px, -10.945px) scale(1.08);"></div>
+    <div class="hero-veil"></div>
+    <div class="hero-content reveal in-view">
+      <p class="eyebrow">— CELEBRATING —</p>
+      <h1 class="hero-title">Happy Birthday</h1>
+      <!-- This text is replaced at runtime with the validated name from the login. -->
+      <p id="heroName" class="hero-name">PLACEHOLDER NAME</p>
+      <button class="btn-primary" data-scroll="memories">
+        <span>Begin Journey</span>
+        <span class="btn-shine"></span>
+      </button>
+    </div>
+    <div class="scroll-indicator">
+      <div class="scroll-line"></div>
+      <p>SCROLL</p>
+    </div>
+  </section>
+
+<!-- CHAPTER I — GALLERY -->
+<section id="memories" class="gallery">
+  <div class="container">
+    <div class="section-header reveal in-view">
+      <p class="eyebrow">— CHAPTER I —</p>
+      <h2 class="section-title">Some Memories</h2>
+    </div>
+
+    <!-- Polaroid Scatter Layout -->
+    <div class="polaroid-gallery-wrapper reveal in-view">
+      <ul class="polaroid-list">
+        <li class="polaroid-item">
+          <img src="assets/GalleryItems/Genshin1.png" alt="Mystic">
+        </li>
+        <li class="polaroid-item">
+          <img src="assets/GalleryItems/Genshin2.png" alt="Warrior">
+        </li>
+        <li class="polaroid-item">
+          <img src="assets/GalleryItems/Genshin3.png" alt="Mage">
+        </li>
+        <li class="polaroid-item">
+          <img src="assets/GalleryItems/Genshin4.png" alt="Archer">
+        </li>
+        <li class="polaroid-item">
+          <img src="assets/GalleryItems/Genshin5.png" alt="Sovereign">
+        </li>
+        <li class="polaroid-item">
+          <img src="assets/GalleryItems/Genshin6.png" alt="Sovereign"> 
+        </li>
+		<li class="polaroid-item">
+          <img src="assets/GalleryItems/Genshin7.png" alt="Sovereign"> 
+        </li>
+		<li class="polaroid-item">
+          <img src="assets/GalleryItems/Genshin8.png" alt="Sovereign"> 
+        </li>
+		<li class="polaroid-item">
+          <img src="assets/GalleryItems/Genshin9.png" alt="Sovereign"> 
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+  <!-- CHAPTER II — BANNERS -->
+  <section id="letters" class="banners">
+      <div class="section-header reveal">
+        <p class="eyebrow">— CHAPTER II —</p>
+        <h2 class="section-title">Letters</h2>
+      </div>
+<div class="letters-container">
+
+    <!-- Letter 1 (Replace YouTube Video ID in data-video-id) -->
+    <div class="envelope-card" data-video-id="AmqbPSczBIE">
+      <div class="envelope">
+        <div class="flap"></div>
+        <div class="stamp">Letter One</div>
+        <div class="blank-paper">
+          <span>Message from certain someone..</span>
+        </div>
+        <div class="pocket"></div>
+      </div>
+    </div>
+
+    <!-- Letter 2 -->
+    <div class="envelope-card" data-video-id="wuf9_wt7FMs"> <!--MAKE SURE TO SEND 1README-->
+      <div class="envelope">
+        <div class="flap"></div>
+        <div class="stamp">Letter Two</div>
+        <div class="blank-paper">
+          <span>Message from certain someone..</span>
+        </div>
+        <div class="pocket"></div>
+      </div>
+    </div>
+
+    <!-- Letter 3 -->
+    <div class="envelope-card" data-video-id="o1qs_3G5ykY">
+      <div class="envelope">
+        <div class="flap"></div>
+        <div class="stamp">Letter Three</div>
+        <div class="blank-paper">
+          <span>Message from certain someone..</span>
+        </div>
+        <div class="pocket"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- YouTube Video Modal -->
+  <div class="video-modal" id="videoModal">
+    <div class="video-content">
+      <button class="close-btn" id="closeBtn">&times;</button>
+      <iframe 
+        id="youtubeIframe" 
+        src="" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+  </section>
+
+  <!-- CHAPTER III — ELEMENTS -->
+  <section id="wishes" class="icons-section">
+    <div class="icons-wrap">
+      <div class="section-header reveal">
+        <p class="eyebrow">— CHAPTER III —</p>
+        <h2 class="section-title">Wishes</h2>
+      </div>
+      <div class="icons-grid reveal">
+        <div id="iconBtns" class="icon-btns"></div>
+        <div id="iconShowcase" class="icon-showcase" style="">
+      <div class="icon-showcase-body">
+        <div class="icon-divider"></div> 
+      </div></div>
+        <div class="carousel">
+          <div id="carouselTrack" class="carousel-track"><div class="carousel-item expandable"> 
+        </div>
+      </div>
+	  <div class="carousel-controls">
+            <button id="prevBtn" class="ctrl-btn">‹</button>
+            <button id="nextBtn" class="ctrl-btn">›</button>
+          </div>
+    </div>
+  </section>
+  
+    <!-- VIDEO -->
+  <section class="video-section">
+    <div class="container narrow center reveal">
+      <p class="eyebrow">— PRESENTATION —</p>
+      <h2 class="section-title">A Message For You</h2>
+      <div class="video-frame">
+        <iframe src="https://youtube.com/embed/zf0a0Ld4AKE" title="YouTube video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope" allowfullscreen=""></iframe>
+      </div>
+      <p class="video-caption">A short video, hopefully without deadness being heard in my voice.</p>
+    </div>
+  </section>
+
+  <!-- FINALE -->
+  <section id="finale" class="finale">
+    <div class="finale-glow"></div>
+    <div class="finale-content reveal">
+      <h2 class="finale-title">Forever Yours</h2>
+      <p class="finale-caption">— Happy Birthday —<br>
+		Side Note: If youtube videos fail to load, open these links:
+		<br>
+		<a href="https://youtu.be/AmqbPSczBIE" target="_blank">https://youtu.be/AmqbPSczBIE</a>
+		<br>
+		<a href="https://youtu.be/wuf9_wt7FMs" target="_blank">https://youtu.be/wuf9_wt7FMs</a>
+		<br>
+		<a href="https://youtu.be/o1qs_3G5ykY" target="_blank">https://youtu.be/o1qs_3G5ykY</a>
+		<br>
+		<a href="https://youtu.be/zf0a0Ld4AKE" target="_blank">https://youtu.be/zf0a0Ld4AKE</a>
+	  </p>
+    </div>
+  </section>
+</main>
+
+<audio id="bgAudio" loop="" src="assets/Bday.mp3"></audio>
+
+<script src="script.js"></script>
+</body>
+</html>
